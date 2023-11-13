@@ -4,7 +4,7 @@ from app import app
 from app.v1.files import bp
 
 @bp.post("/")
-def hello():
+def upload():
     file = request.files['file']
     # check file extension
     if not file.mimetype in app.config.get('ALLOWED_UPLOAD_FILES_EXTENSIONS'):
@@ -24,3 +24,12 @@ def hello():
         fullPath = fullPath
     )
     return response
+
+@bp.delete("/<path:subPath>")
+def delete(subPath):
+    uploadFolder = app.config.get('UPLOAD_FOLDER')
+    fullPath = f'{uploadFolder}/{subPath}'
+    if not os.path.exists(fullPath):
+        return 'File is not exist', 400
+    os.remove(fullPath)
+    return ''
