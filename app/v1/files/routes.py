@@ -12,6 +12,7 @@ def upload():
     path = request.form['path']
     folderPath = app.config.get('UPLOAD_FOLDER') + path
     existFolder = os.path.isdir(folderPath)
+    savedFullPath = f'{path}/{file.filename}'
     fullPath = f'{folderPath}/{file.filename}'
     if not existFolder:
         os.makedirs(folderPath, exist_ok=True)
@@ -20,8 +21,7 @@ def upload():
     file.save(os.path.join(folderPath, file.filename))
     response = dict(
         name = file.filename,
-        path = folderPath,
-        fullPath = fullPath
+        path = savedFullPath,
     )
     return response
 
