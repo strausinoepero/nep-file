@@ -1,5 +1,5 @@
 import os
-from flask import request, jsonify
+from flask import request, jsonify, send_file
 from app import app
 from app.v1.files import bp
 from marshmallow import Schema, fields, ValidationError
@@ -57,3 +57,12 @@ def delete(subPath):
         return 'File is not exist', 400
     os.remove(fullPath)
     return ''
+
+@bp.get("/<path:subPath>")
+def view(subPath):
+    uploadFolder = app.config.get('UPLOAD_FOLDER')
+    fullPath = f'{uploadFolder}/{subPath}'
+    if not os.path.exists(fullPath):
+        return 'File is not exist', 400
+    print(os.path.dirname(app.instance_path) + fullPath)
+    return send_file(f'{os.path.dirname(app.instance_path)}/{fullPath}')
