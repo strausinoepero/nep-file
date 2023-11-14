@@ -1,28 +1,52 @@
 import os
-from flask import request
+from flask import request, jsonify
 from app import app
 from app.v1.files import bp
+from marshmallow import Schema, fields, ValidationError
+
+class UploadSchema(Schema):
+    path = fields.String(required=True)
 
 @bp.post("/")
 def upload():
+    if 'file' not in request.files:
+        return '', 400
+    
     file = request.files['file']
-    # check file extension
-    if not file.mimetype in app.config.get('ALLOWED_UPLOAD_FILES_EXTENSIONS'):
-        return f'{file.mimetype} is not supported', 400
+    
+    schema = UploadSchema()
+    try:
+        # Validate request body against schema data types
+        schema.load(request.form)
+
+        # # check file extension
+        if not file.mimetype in app.config.get('ALLOWED_UPLOAD_FILES_EXTENSIONS'):
+            return f'{file.mimetype} is not supported', 400
+        
+        if request.form['path'][0] != '/':
+            return 'Path: first character is not - /', 400 
+    except ValidationError as err:
+        # Return a nice message if validation fails
+        return jsonify(err.messages), 400
+    
     path = request.form['path']
     folderPath = app.config.get('UPLOAD_FOLDER') + path
     existFolder = os.path.isdir(folderPath)
     savedFullPath = f'{path}/{file.filename}'
     fullPath = f'{folderPath}/{file.filename}'
+
     if not existFolder:
         os.makedirs(folderPath, exist_ok=True)
     if os.path.isfile(fullPath):
         return 'File is exist', 409
+    
     file.save(os.path.join(folderPath, file.filename))
+
     response = dict(
         name = file.filename,
         path = savedFullPath,
     )
+
     return response
 
 @bp.delete("/<path:subPath>")
