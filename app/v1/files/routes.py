@@ -7,7 +7,7 @@ from marshmallow import Schema, fields, ValidationError
 class UploadSchema(Schema):
     path = fields.String(required=True)
 
-@bp.post("/")
+@bp.post("")
 def upload():
     if 'file' not in request.files:
         return '', 400
