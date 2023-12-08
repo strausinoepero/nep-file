@@ -9,4 +9,4 @@ services:
     ports:
       - 5000:5000
     volumes:
-      - /var/www/nep-files:/app/files
+      - /var/www/nep-file-data:/app/files
