@@ -12,9 +12,9 @@ class DevelopementConfig(BaseConfig):
     DEBUG = True
 
 class TestingConfig(BaseConfig):
-    UPLOAD_FOLDER = '/var/lib/nep-files'
+    UPLOAD_FOLDER = 'files'
     DEBUG = True
 
 class ProductionConfig(BaseConfig):
-    UPLOAD_FOLDER = '/var/lib/nep-files'
+    UPLOAD_FOLDER = 'files'
     DEBUG = False
