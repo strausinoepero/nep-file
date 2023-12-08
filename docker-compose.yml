@@ -1,0 +1,12 @@
+version: '3.9'
+services:  
+  flask:
+    container_name: nep_file
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - 5000:5000
+    volumes:
+      - /var/www/nep-files:/app/files
